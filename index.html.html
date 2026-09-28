@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lensfield — Free SEO Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root{
+  --ink:#182333; --paper:#F7F5EF; --paper-2:#EFEBE0; --amber:#D98E31; --amber-deep:#B5701E;
+  --slate:#5B6270; --line:#DBD5C4; --white:#FFFDF9; --danger:#B4432F; --good:#3C7A5A;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',-apple-system,system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--ink:#EDE9DD;--paper:#151A22;--paper-2:#1C222C;--white:#1C222C;--line:#2C3340;--slate:#9BA3B2;} }
+:root[data-theme="dark"]{--ink:#EDE9DD;--paper:#151A22;--paper-2:#1C222C;--white:#1C222C;--line:#2C3340;--slate:#9BA3B2;}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;font-size:16px;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px}
+header.site{border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--paper);z-index:10;padding-top:env(safe-area-inset-top,0px)}
+.navrow{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;max-width:960px;margin:0 auto}
+.brand{font-family:var(--serif);font-weight:600;font-size:1.3rem;letter-spacing:.2px;text-decoration:none;color:var(--ink)}
+.brand span{color:var(--amber-deep)}
+nav.main{display:flex;gap:22px;font-size:.94rem}
+nav.main a{text-decoration:none;color:var(--slate);border-bottom:2px solid transparent;padding-bottom:3px}
+nav.main a.active,nav.main a:hover{color:var(--ink);border-color:var(--amber)}
+.burger{display:none;background:none;border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:1.1rem}
+@media (max-width:680px){
+  nav.main{display:none;position:absolute;top:100%;left:0;right:0;background:var(--paper);flex-direction:column;gap:0;border-bottom:1px solid var(--line)}
+  nav.main.open{display:flex}
+  nav.main a{padding:14px 24px;border-bottom:1px solid var(--line)}
+  .burger{display:block}
+}
+main{min-height:60vh;padding:48px 0 80px}
+h1{font-family:var(--serif);font-weight:600;font-size:2.3rem;line-height:1.15;margin:0 0 14px}
+h2{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:36px 0 12px}
+h3{font-family:var(--serif);font-weight:600;font-size:1.15rem;margin:22px 0 8px}
+p{color:var(--ink)}
+.lead{color:var(--slate);font-size:1.08rem;max-width:640px}
+.hero{padding:6px 0 20px;border-bottom:1px solid var(--line);margin-bottom:40px}
+.hero .kicker{font-family:var(--mono);font-size:.8rem;color:var(--amber-deep);margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-top:8px}
+.card{border:1px solid var(--line);border-radius:10px;padding:20px;background:var(--white);text-decoration:none;color:var(--ink);display:block;transition:border-color .15s}
+.card:hover{border-color:var(--amber)}
+.card h3{margin:0 0 6px;font-size:1.05rem}
+.card p{margin:0;color:var(--slate);font-size:.92rem}
+.btn{display:inline-block;background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:7px;text-decoration:none;font-weight:600;font-size:.94rem;border:none;cursor:pointer;font-family:var(--sans)}
+.btn:hover{background:var(--amber-deep)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+textarea,input[type=text],input[type=url],input[type=email],input[type=password],select{
+  width:100%;border:1px solid var(--line);border-radius:7px;padding:11px 12px;font-family:var(--sans);font-size:.96rem;background:var(--white);color:var(--ink)
+}
+textarea{min-height:150px;font-family:var(--mono);font-size:.88rem;resize:vertical}
+label{display:block;font-size:.86rem;font-weight:600;margin:16px 0 6px;color:var(--slate)}
+.toolbox{border:1px solid var(--line);border-radius:12px;padding:24px;background:var(--white);margin:24px 0}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:18px}
+.stat b{display:block;font-family:var(--serif);font-size:1.6rem}
+.stat span{font-size:.8rem;color:var(--slate)}
+table{width:100%;border-collapse:collapse;margin-top:14px;font-size:.9rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--slate);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em}
+.faq-item{border-bottom:1px solid var(--line);padding:16px 0}
+.faq-item summary{cursor:pointer;font-weight:600}
+footer{border-top:1px solid var(--line);padding:36px 0;color:var(--slate);font-size:.86rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
+footer a{text-decoration:none;color:var(--slate)}
+footer a:hover{color:var(--ink)}
+.badge{display:inline-block;background:var(--paper-2);border-radius:5px;padding:2px 8px;font-size:.72rem;font-family:var(--mono);color:var(--slate);margin-right:6px}
+.post-item{border-bottom:1px solid var(--line);padding:22px 0}
+.post-item h3{margin:0 0 6px}
+.post-meta{font-size:.8rem;color:var(--slate);font-family:var(--mono)}
+.msg{padding:12px 14px;border-radius:7px;margin:14px 0;font-size:.9rem}
+.msg.ok{background:rgba(60,122,90,.12);color:var(--good)}
+.msg.err{background:rgba(180,67,47,.12);color:var(--danger)}
+.pill-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.pill-row label{display:flex;align-items:center;gap:6px;font-weight:400;color:var(--ink);margin:0;border:1px solid var(--line);padding:7px 11px;border-radius:20px;font-size:.85rem}
+.admin-bar{display:flex;gap:10px;margin-bottom:20px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:680px){.two-col{grid-template-columns:1fr}}
+.gate-wrap{max-width:380px;margin:40px auto;text-align:left}
+.gate-wrap .hero{text-align:center;border:none;padding-bottom:0}
+.field-row{display:flex;gap:10px}
+.field-row>*{flex:1}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="navrow">
+    <a href="#/" class="brand">Lens<span>field</span></a>
+    <button class="burger" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+    <nav class="main" id="nav">
+      <a href="#/" data-r="/">Home</a>
+      <a href="#/tools" data-r="/tools">Tools</a>
+      <a href="#/blog" data-r="/blog">Blog</a>
+      <a href="#/guides" data-r="/guides">Guides</a>
+      <a href="#/categories" data-r="/categories">Categories</a>
+      <a href="#/about" data-r="/about">About</a>
+      <a href="#/contact" data-r="/contact">Contact</a>
+    </nav>
+    <div id="authArea" style="display:flex;align-items:center;gap:10px;font-size:.88rem;white-space:nowrap"></div>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+<footer>
+  <div class="wrap">
+    <div>© <span id="yr"></span> <span id="fSiteName">Lensfield</span>. Free SEO tools for people who'd rather build than guess.</div>
+    <div>
+      <a href="#/about">About</a> · <a href="#/contact">Contact</a> · <a href="#/privacy">Privacy</a> ·
+      <a href="#/terms">Terms</a> · <a href="#/disclaimer">Disclaimer</a> · <a href="#/cookies">Cookies</a> ·
+      <a href="#/sitemap">Sitemap</a> · <a href="#/admin">Admin</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============ SHARED BACKEND (Supabase) ============
+   Fill these two lines with your own free Supabase project's URL and anon key
+   (Project Settings -> API) to make blog posts, tool-usage stats, contact
+   messages and site settings shared across every visitor and device.
+   Leave them as-is and the site still works, but data stays private to
+   each visitor's own browser (localStorage) instead of being shared. */
+const SUPABASE_URL = "https://rltutefxcqjzbsqolxnj.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_oCc0dMzLlpFHKLNCPyhkYQ_2vECZG_y";
+const SB_READY = SUPABASE_URL.startsWith('http') && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
+let sb = null;
+if (SB_READY && window.supabase) { try{ sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }catch(e){ sb=null; } }
+
+/* ---------- storage helpers (per-viewer fallback, localStorage) ---------- */
+const LS = {
+  get(k, fallback){ try{ const v = localStorage.getItem(k); return v===null? fallback : JSON.parse(v);}catch(e){ return fallback; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const SEED_POSTS = [
+  {id:'p1', title:'Why Meta Descriptions Still Matter in 2026', slug:'why-meta-descriptions-still-matter', category:'Fundamentals',
+   date:'2026-08-12', excerpt:'Search engines rewrite them half the time, so why bother? Because the other half still decides your click-through rate.',
+   body:'Meta descriptions rarely influence rankings directly, but they remain one of the few pieces of copy you fully control on the results page. When a search engine chooses not to rewrite yours, it becomes your pitch — the one sentence standing between a searcher and a competitor\'s link. Keep it under 160 characters, mention the specific problem you solve, and avoid repeating your title verbatim. Tools like a meta tag analyzer can catch the pages where you forgot to write one at all, which happens more often than most teams admit.'},
+  {id:'p2', title:'Keyword Density Is a Diagnostic, Not a Target', slug:'keyword-density-is-a-diagnostic', category:'Strategy',
+   date:'2026-07-30', excerpt:'Chasing a magic percentage will make your writing worse. Here is what density numbers are actually good for.',
+   body:'There is no ideal keyword density. Search engines moved past exact-match counting years ago in favor of topical understanding. What density checking is still useful for is catching the two failure modes at either extreme: pages so thin they never mention the topic\'s core terms, and pages so stuffed with repetition that they read like they were written for a crawler instead of a person. Use a density checker as a sanity check after you write, not as a brief before you start.'}
+];
+let CACHE = { posts: SEED_POSTS, usage: [], settings: {siteName:'Lensfield', contactEmail:'hello@lensfield.example', gaId:''} };
+function getPosts(){ return CACHE.posts; }
+function getUsage(){ return CACHE.usage; }
+function getSettings(){ return CACHE.settings; }
+
+async function refreshPosts(){
+  if(sb){
+    const {data, error} = await sb.from('posts').select('*').order('created_at', {ascending:false});
+    if(!error && data && data.length) CACHE.posts = data.map(p=>({id:p.id, title:p.title, slug:p.slug, category:p.category||'General', excerpt:p.excerpt, body:p.body, date:(p.created_at||'').slice(0,10)}));
+    else if(!error) CACHE.posts = [];
+  } else CACHE.posts = LS.get('lf_posts', SEED_POSTS);
+}
+async function addPost(post){
+  if(sb){ await sb.from('posts').insert({id:post.id, title:post.title, slug:post.slug, category:post.category, excerpt:post.excerpt, body:post.body}); }
+  else { const all=LS.get('lf_posts', SEED_POSTS); all.unshift(post); LS.set('lf_posts', all); }
+  await refreshPosts();
+}
+async function deletePost(id){
+  if(sb){ await sb.from('posts').delete().eq('id', id); }
+  else { LS.set('lf_posts', LS.get('lf_posts', SEED_POSTS).filter(p=>p.id!==id)); }
+  await refreshPosts();
+}
+function logToolUse(name){
+  if(sb){ sb.from('tool_usage').insert({tool:name}).then(()=>{}); CACHE.usage.push({tool:name, t:Date.now()}); }
+  else { const log=LS.get('lf_usage', []); log.push({tool:name, t:Date.now()}); LS.set('lf_usage', log.slice(-500)); CACHE.usage=log; }
+}
+async function refreshUsage(){
+  if(sb){
+    const {data, error} = await sb.from('tool_usage').select('tool, created_at').order('created_at', {ascending:false}).limit(1000);
+    if(!error && data) CACHE.usage = data.map(u=>({tool:u.tool, t:new Date(u.created_at).getTime()}));
+  } else CACHE.usage = LS.get('lf_usage', []);
+}
+async function saveSettings(s){
+  CACHE.settings = s;
+  if(sb){ await sb.from('settings').upsert({id:1, site_name:s.siteName, contact_email:s.contactEmail, ga_id:s.gaId}); }
+  else LS.set('lf_settings', s);
+}
+async function refreshSettings(){
+  if(sb){
+    const {data, error} = await sb.from('settings').select('*').eq('id',1).maybeSingle();
+    if(!error && data) CACHE.settings = {siteName:data.site_name||'Lensfield', contactEmail:data.contact_email||'', gaId:data.ga_id||''};
+  } else CACHE.settings = LS.get('lf_settings', {siteName:'Lensfield', contactEmail:'hello@lensfield.example', gaId:''});
+}
+async function submitContact(entry){
+  if(sb){ await sb.from('contact_submissions').insert(entry); }
+}
+
+/* ---------- router ---------- */
+const routes = {};
+function route(path, fn){ routes[path]=fn; }
+function navigate(){
+  const hash = location.hash.replace('#','') || '/';
+  const path = hash.split('?')[0];
+  /* Site-wide login wall: block everything except /login, /signup, and /admin (which has its own gate) until the visitor is signed in. */
+  if(sb && !currentUser && path!=='/login' && path!=='/signup' && !path.startsWith('/admin')){
+    location.hash='#/login';
+    return;
+  }
+  document.getElementById('nav').style.display = (sb && !currentUser) ? 'none' : '';
+  document.getElementById('nav').classList.remove('open');
+  document.querySelectorAll('nav.main a').forEach(a=>a.classList.toggle('active', a.dataset.r===path || (path.startsWith('/tools/')&&a.dataset.r==='/tools') || (path.startsWith('/blog')&&a.dataset.r==='/blog')));
+  const fn = routes[path] || routes['/tools/'+path.split('/tools/')[1]] && routes['/tools/:slug'];
+  const handler = routes[path] || (path.startsWith('/tools/') && routes['/tools/:slug']) || (path.startsWith('/blog/') && routes['/blog/:slug']) || (path.startsWith('/category/') && routes['/category/:slug']) || routes['/404'];
+  document.getElementById('app').innerHTML='';
+  window.scrollTo(0,0);
+  handler(path);
+}
+window.addEventListener('hashchange', navigate);
+
+/* ---------- shared UI bits ---------- */
+function toolPageShell({title, description, howto, benefits, faqs, related, toolHtml}){
+  return `
+    <div class="hero"><div class="kicker">Free tool</div><h1>${title}</h1><p class="lead">${description}</p></div>
+    <div class="toolbox">${toolHtml}</div>
+    <h2>How to use this tool</h2>
+    <ol>${howto.map(s=>`<li style="margin-bottom:6px">${s}</li>`).join('')}</ol>
+    <h2>Why it helps</h2>
+    <ul>${benefits.map(b=>`<li style="margin-bottom:6px">${b}</li>`).join('')}</ul>
+    <h2>FAQ</h2>
+    ${faqs.map(f=>`<details class="faq-item"><summary>${f.q}</summary><p>${f.a}</p></details>`).join('')}
+    <h2>Related tools</h2>
+    <div class="grid">${related.map(r=>`<a class="card" href="#/tools/${r.slug}"><h3>${r.name}</h3><p>${r.desc}</p></a>`).join('')}</div>
+  `;
+}
+const TOOL_LIST = [
+  {slug:'meta-tag-analyzer', name:'Meta Tag Analyzer', desc:'Paste a page\'s HTML to check title, description, canonical and OG tags.'},
+  {slug:'word-counter', name:'Word Counter', desc:'Words, characters, sentences and reading time, instantly.'},
+  {slug:'keyword-density-checker', name:'Keyword Density Checker', desc:'See which phrases repeat most in your draft.'},
+  {slug:'slug-generator', name:'URL / Slug Generator', desc:'Turn a title into a clean, SEO-friendly URL.'},
+  {slug:'robots-txt-generator', name:'Robots.txt Generator', desc:'Build a valid robots.txt without memorizing syntax.'},
+];
+
+/* ---------- USER AUTH (Supabase Auth: real signup/login/logout, edit name & password) ---------- */
+let currentUser = null;
+function renderAuthArea(){
+  const el = document.getElementById('authArea');
+  if(!sb){ el.innerHTML = ''; return; }
+  if(currentUser){
+    const name = currentUser.user_metadata?.full_name || currentUser.email;
+    el.innerHTML = `<a href="#/account" style="text-decoration:none;color:var(--ink);font-weight:600">${name}</a> <a href="#" id="au-logout" style="color:var(--slate);text-decoration:none">Log out</a>`;
+    document.getElementById('au-logout').onclick = async (e)=>{ e.preventDefault(); await sb.auth.signOut(); };
+  } else {
+    el.innerHTML = `<a href="#/login" style="text-decoration:none;color:var(--slate)">Log in</a> <a href="#/signup" class="btn" style="padding:7px 14px;font-size:.85rem">Sign up</a>`;
+  }
+}
+if(sb){
+  sb.auth.onAuthStateChange((_event, session)=>{ currentUser = session?.user || null; renderAuthArea(); if(location.hash.startsWith('#/login')||location.hash.startsWith('#/signup')){ location.hash='#/account'; } navigate(); });
+}
+route('/signup', ()=>{
+  if(currentUser){ location.hash='#/account'; navigate(); return; }
+  document.getElementById('app').innerHTML = `<div class="gate-wrap">
+    <div class="hero"><h1>Create an account</h1><p class="lead">Sign up to access the tools on this site.</p></div>
+    <form id="su-f">
+      <label>Name</label><input type="text" id="su-name" required>
+      <label>Email</label><input type="email" id="su-email" required>
+      <label>Password</label><input type="password" id="su-pass" required minlength="6">
+      <button class="btn" style="margin-top:16px;width:100%" type="submit">Sign up</button>
+      <div id="su-msg"></div>
+      <p style="margin-top:14px;color:var(--slate);font-size:.9rem;text-align:center">Already have an account? <a href="#/login">Log in</a></p>
+    </form></div>`;
+  document.getElementById('su-f').addEventListener('submit', async e=>{
+    e.preventDefault();
+    if(!sb){ document.getElementById('su-msg').innerHTML='<div class="msg err">Database not connected.</div>'; return; }
+    const {data, error} = await sb.auth.signUp({email:document.getElementById('su-email').value, password:document.getElementById('su-pass').value, options:{data:{full_name:document.getElementById('su-name').value}}});
+    if(error){ document.getElementById('su-msg').innerHTML='<div class="msg err">'+error.message+'</div>'; return; }
+    if(data.user && !data.session){ document.getElementById('su-msg').innerHTML='<div class="msg ok">Account created — check your email to confirm, then log in.</div>'; }
+  });
+});
+route('/login', ()=>{
+  if(currentUser){ location.hash='#/account'; navigate(); return; }
+  document.getElementById('app').innerHTML = `<div class="gate-wrap">
+    <div class="hero"><h1>Log in</h1><p class="lead">Sign in to access the tools on this site.</p></div>
+    <form id="li-f">
+      <label>Email</label><input type="email" id="li-email" required>
+      <label>Password</label><input type="password" id="li-pass" required>
+      <button class="btn" style="margin-top:16px;width:100%" type="submit">Log in</button>
+      <div id="li-msg"></div>
+      <p style="margin-top:14px;color:var(--slate);font-size:.9rem;text-align:center">No account yet? <a href="#/signup">Sign up</a></p>
+    </form></div>`;
+  document.getElementById('li-f').addEventListener('submit', async e=>{
+    e.preventDefault();
+    if(!sb){ document.getElementById('li-msg').innerHTML='<div class="msg err">Database not connected.</div>'; return; }
+    const {error} = await sb.auth.signInWithPassword({email:document.getElementById('li-email').value, password:document.getElementById('li-pass').value});
+    if(error){ document.getElementById('li-msg').innerHTML='<div class="msg err">'+error.message+'</div>'; return; }
+    location.hash='#/account'; navigate();
+  });
+});
+route('/account', ()=>{
+  if(!currentUser){ location.hash='#/login'; navigate(); return; }
+  document.getElementById('app').innerHTML = `
+    <div class="hero"><h1>Your account</h1><p class="lead">${currentUser.email}</p></div>
+    <h2>Edit name</h2>
+    <form id="acc-name" style="max-width:380px">
+      <label>Name</label><input type="text" id="acc-name-in" value="${currentUser.user_metadata?.full_name||''}">
+      <button class="btn" style="margin-top:14px" type="submit">Save name</button>
+      <div id="acc-name-msg"></div>
+    </form>
+    <h2>Change password</h2>
+    <form id="acc-pass" style="max-width:380px">
+      <label>New password</label><input type="password" id="acc-pass-in" required minlength="6">
+      <button class="btn" style="margin-top:14px" type="submit">Update password</button>
+      <div id="acc-pass-msg"></div>
+    </form>`;
+  document.getElementById('acc-name').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const {data, error} = await sb.auth.updateUser({data:{full_name:document.getElementById('acc-name-in').value}});
+    document.getElementById('acc-name-msg').innerHTML = error? '<div class="msg err">'+error.message+'</div>' : '<div class="msg ok">Name updated.</div>';
+    if(!error){ currentUser=data.user; renderAuthArea(); }
+  });
+  document.getElementById('acc-pass').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const {error} = await sb.auth.updateUser({password:document.getElementById('acc-pass-in').value});
+    document.getElementById('acc-pass-msg').innerHTML = error? '<div class="msg err">'+error.message+'</div>' : '<div class="msg ok">Password updated.</div>';
+    e.target.reset();
+  });
+});
+
+/* ---------- HOME ---------- */
+route('/', ()=>{
+  document.getElementById('app').innerHTML = `
+    <div class="hero">
+      <div class="kicker">Free, no sign-up SEO tools</div>
+      <h1>Check your page before the search engine does.</h1>
+      <p class="lead">Four small, sharp tools for the everyday work of shipping pages that read well and rank fairly — no account, no paywall, no fluff.</p>
+      <div style="margin-top:20px"><a class="btn" href="#/tools">Browse tools</a> <a class="btn ghost" href="#/blog">Read the blog</a></div>
+    </div>
+    <h2>Start here</h2>
+    <div class="grid">
+      ${TOOL_LIST.map(t=>`<a class="card" href="#/tools/${t.slug}"><h3>${t.name}</h3><p>${t.desc}</p></a>`).join('')}
+    </div>
+    <h2>From the blog</h2>
+    <div>${getPosts().slice(0,2).map(p=>`
+      <div class="post-item"><span class="post-meta">${p.category} · ${p.date}</span>
+      <h3><a href="#/blog/${p.slug}" style="text-decoration:none">${p.title}</a></h3>
+      <p style="color:var(--slate)">${p.excerpt}</p></div>`).join('')}
+    </div>
+  `;
+});
+
+/* ---------- TOOLS INDEX ---------- */
+route('/tools', ()=>{
+  document.getElementById('app').innerHTML = `
+    <div class="hero"><div class="kicker">Tools</div><h1>All SEO tools</h1><p class="lead">Pick one below — each runs entirely in your browser.</p></div>
+    <div class="grid">${TOOL_LIST.map(t=>`<a class="card" href="#/tools/${t.slug}"><h3>${t.name}</h3><p>${t.desc}</p></a>`).join('')}</div>
+  `;
+});
+
+/* ---------- META TAG ANALYZER (paste-HTML based, no server fetch needed) ---------- */
+route('/tools/meta-tag-analyzer', ()=>{
+  document.getElementById('app').innerHTML = toolPageShell({
+    title:'Meta Tag Analyzer', description:'Paste a page\'s HTML source (View Source / Ctrl+U) to check its title, meta description, canonical URL, robots tag and Open Graph tags.',
+    toolHtml:`<label>Paste page HTML source</label><textarea id="mt-in" placeholder="Paste full HTML here (view-source of the page)..."></textarea>
+      <button class="btn" id="mt-run" style="margin-top:14px">Analyze</button>
+      <div id="mt-out"></div>`,
+    howto:['Open the target page, view its source (Ctrl+U / Cmd+Option+U), copy all of it.','Paste the HTML into the box above.','Click Analyze to see each tag with a pass/warn/fail check.'],
+    benefits:['Catches missing or duplicate title and description tags.','Flags titles/descriptions that are too long or too short.','Confirms canonical and Open Graph tags are present before you ship.'],
+    faqs:[{q:'Why paste HTML instead of a URL?',a:'Fetching another site\'s page directly from a browser is blocked by CORS on most servers, so pasting the source keeps this tool fully client-side and reliable. A URL-based version needs a small backend — see the note below.'},
+      {q:'What are the ideal lengths?',a:'Titles: roughly 50-60 characters. Meta descriptions: roughly 120-160 characters, since search engines truncate beyond that.'}],
+    related:TOOL_LIST.filter(t=>t.slug!=='meta-tag-analyzer')
+  });
+  document.getElementById('mt-run').onclick=()=>{
+    const html=document.getElementById('mt-in').value;
+    if(!html.trim()){ document.getElementById('mt-out').innerHTML='<p class="msg err">Paste some HTML first.</p>'; return; }
+    const doc=new DOMParser().parseFromString(html,'text/html');
+    const title=doc.querySelector('title')?.textContent.trim()||'';
+    const desc=doc.querySelector('meta[name="description"]')?.getAttribute('content')||'';
+    const robots=doc.querySelector('meta[name="robots"]')?.getAttribute('content')||'';
+    const canon=doc.querySelector('link[rel="canonical"]')?.getAttribute('href')||'';
+    const og=['og:title','og:description','og:image','og:url'].map(p=>[p, doc.querySelector(`meta[property="${p}"]`)?.getAttribute('content')||'']);
+    const row=(label,val,ok,note)=>`<tr><td>${label}</td><td>${val?val:'<span class="msg err" style="padding:2px 8px">Missing</span>'}</td><td>${ok?'<span style="color:var(--good)">Pass</span>':'<span style="color:var(--danger)">Check</span>'}</td><td style="color:var(--slate);font-size:.85rem">${note}</td></tr>`;
+    document.getElementById('mt-out').innerHTML = `
+      <h3 style="margin-top:20px">Results</h3>
+      <table><tr><th>Tag</th><th>Value</th><th>Status</th><th>Note</th></tr>
+      ${row('Title', title, title && title.length>=15 && title.length<=60, title?`${title.length} chars`:'Add a unique, descriptive title')}
+      ${row('Meta description', desc, desc && desc.length>=70 && desc.length<=160, desc?`${desc.length} chars`:'Add a compelling 120-160 char summary')}
+      ${row('Canonical URL', canon, !!canon, canon?'':'Add a self-referencing canonical link')}
+      ${row('Robots tag', robots, true, robots||'No explicit robots tag found (defaults to index, follow)')}
+      ${og.map(([p,v])=>row(p, v, !!v, v?'':'Recommended for social sharing previews')).join('')}
+      </table>`;
+    logToolUse('meta-tag-analyzer');
+  };
+});
+
+/* ---------- WORD COUNTER ---------- */
+route('/tools/word-counter', ()=>{
+  document.getElementById('app').innerHTML = toolPageShell({
+    title:'Word Counter', description:'Paste your draft to see word, character and sentence counts, plus estimated reading time.',
+    toolHtml:`<label>Your text</label><textarea id="wc-in" placeholder="Paste or type text here..."></textarea>
+      <div class="stats" id="wc-out">
+        <div class="stat"><b>0</b><span>Words</span></div>
+        <div class="stat"><b>0</b><span>Characters</span></div>
+        <div class="stat"><b>0</b><span>Sentences</span></div>
+        <div class="stat"><b>0</b><span>Paragraphs</span></div>
+        <div class="stat"><b>0s</b><span>Reading time</span></div>
+      </div>`,
+    howto:['Paste or type your text into the box above.','Read the live counts below the box — they update as you type.','Use reading time to judge whether an intro or meta description is too long.'],
+    benefits:['Keeps meta descriptions and titles inside safe character limits.','Flags paragraphs that have drifted too long for scannable web copy.','Gives a rough reading-time estimate for blog posts and guides.'],
+    faqs:[{q:'How is reading time calculated?',a:'We assume an average reading speed of 200 words per minute, a common baseline for adult silent reading.'},
+      {q:'Does this tool store my text?',a:'No — counting happens entirely in your browser and nothing is sent anywhere.'}],
+    related:TOOL_LIST.filter(t=>t.slug!=='word-counter')
+  });
+  const input=document.getElementById('wc-in'), out=document.getElementById('wc-out');
+  input.addEventListener('input', ()=>{
+    const text=input.value;
+    const words=(text.trim().match(/\S+/g)||[]).length;
+    const chars=text.length;
+    const sentences=(text.match(/[.!?]+(\s|$)/g)||[]).length || (text.trim()?1:0);
+    const paras=(text.split(/\n\s*\n/).filter(p=>p.trim())).length || (text.trim()?1:0);
+    const mins=Math.ceil(words/200);
+    out.innerHTML = ['<div class="stat"><b>'+words+'</b><span>Words</span></div>',
+      '<div class="stat"><b>'+chars+'</b><span>Characters</span></div>',
+      '<div class="stat"><b>'+sentences+'</b><span>Sentences</span></div>',
+      '<div class="stat"><b>'+paras+'</b><span>Paragraphs</span></div>',
+      '<div class="stat"><b>'+(mins||0)+'m</b><span>Reading time</span></div>'].join('');
+    if(text.trim()) logToolUse('word-counter');
+  });
+});
+
+/* ---------- KEYWORD DENSITY ---------- */
+route('/tools/keyword-density-checker', ()=>{
+  document.getElementById('app').innerHTML = toolPageShell({
+    title:'Keyword Density Checker', description:'Paste a page or draft to see which single words and two-word phrases repeat most often.',
+    toolHtml:`<label>Your text</label><textarea id="kd-in" placeholder="Paste your content here..."></textarea>
+      <button class="btn" id="kd-run" style="margin-top:14px">Analyze</button>
+      <div id="kd-out"></div>`,
+    howto:['Paste the body content of a page or draft.','Click Analyze.','Check the top phrases table for anything repeated unnaturally often.'],
+    benefits:['Surfaces accidental over-repetition before publishing.','Confirms your primary topic actually appears in the body, not just the title.','Works on any language that separates words with spaces.'],
+    faqs:[{q:'What counts as a stop word?',a:'Common connective words (the, and, of, to, a, in...) are excluded from single-word results so the list reflects meaningful terms.'},
+      {q:'Is there an ideal density percentage?',a:'No — treat this as a diagnostic for obvious over- or under-use, not a target to hit.'}],
+    related:TOOL_LIST.filter(t=>t.slug!=='keyword-density-checker')
+  });
+  const STOP=new Set('a,an,the,and,or,but,of,to,in,on,at,for,is,are,was,were,be,been,it,this,that,as,with,by,from,your,you,we,our,i,not,so,if,can,will,has,have,had'.split(','));
+  document.getElementById('kd-run').onclick=()=>{
+    const text=document.getElementById('kd-in').value.toLowerCase().replace(/[^a-z0-9\s'-]/g,' ');
+    const words=text.split(/\s+/).filter(Boolean);
+    const total=words.length;
+    if(!total){ document.getElementById('kd-out').innerHTML='<p class="msg err">Paste some text first.</p>'; return; }
+    const single={}, phrase={};
+    words.forEach((w,i)=>{ if(!STOP.has(w)){ single[w]=(single[w]||0)+1; } if(i<words.length-1){ const p=w+' '+words[i+1]; phrase[p]=(phrase[p]||0)+1; } });
+    const top=(obj,n)=>Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,n);
+    const rows=(arr)=>arr.map(([k,c])=>`<tr><td>${k}</td><td>${c}</td><td>${((c/total)*100).toFixed(1)}%</td></tr>`).join('');
+    document.getElementById('kd-out').innerHTML = `
+      <div class="two-col">
+        <div><h3>Top single words</h3><table><tr><th>Word</th><th>Count</th><th>Density</th></tr>${rows(top(single,10))}</table></div>
+        <div><h3>Top two-word phrases</h3><table><tr><th>Phrase</th><th>Count</th><th>Density</th></tr>${rows(top(phrase,10))}</table></div>
+      </div>`;
+    logToolUse('keyword-density-checker');
+  };
+});
+
+/* ---------- SLUG GENERATOR ---------- */
+route('/tools/slug-generator', ()=>{
+  document.getElementById('app').innerHTML = toolPageShell({
+    title:'URL / Slug Generator', description:'Turn any title into a clean, lowercase, hyphenated URL slug.',
+    toolHtml:`<label>Page or post title</label><input type="text" id="sg-in" placeholder="e.g. 10 Ways to Improve Your Core Web Vitals">
+      <div class="pill-row">
+        <label><input type="checkbox" id="sg-stop" checked> Remove common stop words</label>
+        <label><input type="checkbox" id="sg-trim" checked> Limit to 60 characters</label>
+      </div>
+      <label>Generated slug</label><input type="text" id="sg-out" readonly>`,
+    howto:['Type your page title into the input.','Toggle stop-word removal or the 60-character limit as needed.','Copy the generated slug into your CMS URL field.'],
+    benefits:['Keeps URLs short, readable and keyword-relevant.','Avoids the special characters and casing issues that break canonical tags.','Matches common CMS conventions (lowercase, hyphen-separated).'],
+    faqs:[{q:'Why remove stop words?',a:'Words like "the" or "and" add length without adding search relevance, so trimming them keeps the URL tighter.'},
+      {q:'Why limit slug length?',a:'Search engines often truncate very long URLs in results, and shorter slugs are easier to share and remember.'}],
+    related:TOOL_LIST.filter(t=>t.slug!=='slug-generator')
+  });
+  const STOP=new Set(['a','an','the','and','or','but','of','to','in','on','at','for','is','are','with','your']);
+  function gen(){
+    const stopOn=document.getElementById('sg-stop').checked, trimOn=document.getElementById('sg-trim').checked;
+    let words=document.getElementById('sg-in').value.toLowerCase().replace(/[^a-z0-9\s-]/g,'').split(/\s+/).filter(Boolean);
+    if(stopOn) words=words.filter(w=>!STOP.has(w));
+    let slug=words.join('-');
+    if(trimOn && slug.length>60){ slug=slug.slice(0,60).replace(/-[^-]*$/,''); }
+    document.getElementById('sg-out').value=slug;
+    if(slug) logToolUse('slug-generator');
+  }
+  ['sg-in','sg-stop','sg-trim'].forEach(id=>document.getElementById(id).addEventListener('input',gen));
+});
+
+/* ---------- ROBOTS.TXT GENERATOR ---------- */
+route('/tools/robots-txt-generator', ()=>{
+  document.getElementById('app').innerHTML = toolPageShell({
+    title:'Robots.txt Generator', description:'Build a valid robots.txt file by choosing rules — no syntax to memorize.',
+    toolHtml:`
+      <div class="field-row">
+        <div><label>Disallow paths (one per line)</label><textarea id="rt-dis" style="min-height:90px">/admin/
+/cgi-bin/</textarea></div>
+        <div><label>Allow paths (optional, one per line)</label><textarea id="rt-allow" style="min-height:90px"></textarea></div>
+      </div>
+      <label>Sitemap URL</label><input type="text" id="rt-sitemap" placeholder="https://example.com/sitemap.xml">
+      <label>Output</label><textarea id="rt-out" readonly style="min-height:150px"></textarea>
+      <button class="btn" id="rt-copy" style="margin-top:10px">Copy to clipboard</button>`,
+    howto:['List any paths you want blocked from crawling, one per line.','Optionally list paths you want explicitly allowed.','Add your sitemap URL and copy the generated file into /robots.txt at your site root.'],
+    benefits:['Prevents crawl budget from being spent on admin or duplicate paths.','Points crawlers straight to your sitemap.','Avoids the malformed syntax that silently breaks a robots.txt file.'],
+    faqs:[{q:'Where does robots.txt need to live?',a:'At the root of your domain — e.g. https://example.com/robots.txt — or crawlers will not find it.'},
+      {q:'Does blocking a page in robots.txt remove it from search results?',a:'Not reliably. Blocked pages can still be indexed by URL alone; use a noindex meta tag if you need a page fully out of results.'}],
+    related:TOOL_LIST.filter(t=>t.slug!=='robots-txt-generator')
+  });
+  function gen(){
+    const dis=document.getElementById('rt-dis').value.split('\n').map(s=>s.trim()).filter(Boolean);
+    const allow=document.getElementById('rt-allow').value.split('\n').map(s=>s.trim()).filter(Boolean);
+    const sm=document.getElementById('rt-sitemap').value.trim();
+    let out='User-agent: *\n';
+    dis.forEach(d=>out+='Disallow: '+d+'\n');
+    allow.forEach(a=>out+='Allow: '+a+'\n');
+    if(sm) out+='\nSitemap: '+sm+'\n';
+    document.getElementById('rt-out').value=out;
+    logToolUse('robots-txt-generator');
+  }
+  ['rt-dis','rt-allow','rt-sitemap'].forEach(id=>document.getElementById(id).addEventListener('input',gen));
+  document.getElementById('rt-copy').onclick=()=>{ navigator.clipboard?.writeText(document.getElementById('rt-out').value).catch(()=>{}); };
+  gen();
+});
+
+/* ---------- BLOG ---------- */
+route('/blog', ()=>{
+  const posts=getPosts();
+  document.getElementById('app').innerHTML = `
+    <div class="hero"><div class="kicker">Blog</div><h1>Notes on SEO that don't chase algorithms</h1></div>
+    <div>${posts.map(p=>`<div class="post-item"><span class="post-meta">${p.category} · ${p.date}</span>
+      <h3><a href="#/blog/${p.slug}" style="text-decoration:none">${p.title}</a></h3>
+      <p style="color:var(--slate)">${p.excerpt}</p></div>`).join('') || '<p>No posts yet.</p>'}</div>
+  `;
+});
+routes['/blog/:slug']=(path)=>{
+  const slug=path.split('/blog/')[1];
+  const post=getPosts().find(p=>p.slug===slug);
+  if(!post){ document.getElementById('app').innerHTML='<h1>Post not found</h1><p><a href="#/blog">← Back to blog</a></p>'; return; }
+  document.getElementById('app').innerHTML = `
+    <div class="hero"><span class="badge">${post.category}</span><span class="post-meta">${post.date}</span>
+    <h1 style="margin-top:14px">${post.title}</h1></div>
+    <p>${post.body}</p>
+    <p style="margin-top:30px"><a href="#/blog">← Back to all posts</a></p>
+  `;
+};
+
+/* ---------- CATEGORY PAGES ---------- */
+route('/categories', ()=>{
+  const posts=getPosts();
+  const cats={}; posts.forEach(p=>{ cats[p.category]=(cats[p.category]||0)+1; });
+  document.getElementById('app').innerHTML = `<div class="hero"><div class="kicker">Blog</div><h1>Categories</h1></div>
+    <div class="grid">${Object.entries(cats).map(([c,n])=>`<a class="card" href="#/category/${encodeURIComponent(c.toLowerCase())}"><h3>${c}</h3><p>${n} post${n>1?'s':''}</p></a>`).join('') || '<p>No categories yet.</p>'}</div>`;
+});
+routes['/category/:slug']=(path)=>{
+  const cat=decodeURIComponent(path.split('/category/')[1]);
+  const posts=getPosts().filter(p=>p.category.toLowerCase()===cat.toLowerCase());
+  document.getElementById('app').innerHTML = `<div class="hero"><div class="kicker">Category</div><h1>${posts[0]?posts[0].category:cat}</h1></div>
+    <div>${posts.map(p=>`<div class="post-item"><span class="post-meta">${p.date}</span><h3><a href="#/blog/${p.slug}" style="text-decoration:none">${p.title}</a></h3><p style="color:var(--slate)">${p.excerpt}</p></div>`).join('') || '<p>No posts in this category yet. <a href="#/blog">Back to blog</a></p>'}</div>`;
+};
+
+/* ---------- GUIDES / FAQ / ABOUT / CONTACT ---------- */
+route('/guides', ()=>{
+  document.getElementById('app').innerHTML = `
+    <div class="hero"><div class="kicker">Resources</div><h1>SEO guides</h1><p class="lead">Short, practical references — start with whichever matches what you're working on today.</p></div>
+    <div class="grid">
+      <a class="card" href="#/tools/word-counter"><h3>Writing meta titles &amp; descriptions</h3><p>Length limits and what actually earns a click.</p></a>
+      <a class="card" href="#/tools/keyword-density-checker"><h3>Understanding topical relevance</h3><p>Why density is a diagnostic, not a target.</p></a>
+      <a class="card" href="#/tools/robots-txt-generator"><h3>Crawl control basics</h3><p>What robots.txt can and can't do for you.</p></a>
+      <a class="card" href="#/tools/slug-generator"><h3>URL structure that lasts</h3><p>Building slugs you won't need to redirect later.</p></a>
+    </div>`;
+});
+route('/faq', ()=>{
+  const items=[
+    ['Do I need an account to use the tools?','No — every tool runs in your browser and works without signing up.'],
+    ['Is my content stored anywhere?','Tool input stays in your browser session; we don\'t send it to a server.'],
+    ['Are the tools really free?','Yes, with no usage limits for the tools listed on this site.'],
+    ['Can I suggest a new tool?','Yes — use the contact form and describe what you need.']
+  ];
+  document.getElementById('app').innerHTML = `<div class="hero"><h1>Frequently asked questions</h1></div>
+    ${items.map(([q,a])=>`<details class="faq-item"><summary>${q}</summary><p>${a}</p></details>`).join('')}`;
+});
+route('/about', ()=>{
+  document.getElementById('app').innerHTML = `
+    <div class="hero"><h1>About Lensfield</h1><p class="lead">We build small, sharp tools instead of one bloated dashboard.</p></div>
+    <p>Lensfield started from a simple frustration: most SEO tools bury a two-second check behind a login wall and a pricing page. Each tool here does one job, does it in the browser, and gets out of your way.</p>
+    <p>The site is actively maintained and new tools are added based on what people actually ask for — see the Contact page to suggest one.</p>`;
+});
+route('/contact', ()=>{
+  document.getElementById('app').innerHTML = `
+    <div class="hero"><h1>Contact us</h1><p class="lead">Questions, bug reports, or a tool you wish existed — we read everything.</p></div>
+    <form id="cf" style="max-width:480px">
+      <label>Name</label><input type="text" required>
+      <label>Email</label><input type="email" required>
+      <label>Message</label><textarea required style="font-family:var(--sans)"></textarea>
+      <button class="btn" style="margin-top:16px" type="submit">Send message</button>
+      <div id="cf-msg"></div>
+    </form>`;
+  document.getElementById('cf').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const f=e.target;
+    await submitContact({name:f[0].value, email:f[1].value, message:f[2].value});
+    document.getElementById('cf-msg').innerHTML='<div class="msg ok">Thanks — your message has been noted. We reply within a couple of days.</div>';
+    f.reset();
+  });
+});
+
+/* ---------- LEGAL PAGES ---------- */
+function legalPage(title, body){ return `<div class="hero"><h1>${title}</h1></div><div>${body}</div>`; }
+route('/privacy', ()=> document.getElementById('app').innerHTML = legalPage('Privacy Policy', `
+  <p>Lensfield ("we") provides free SEO tools without requiring an account. This policy explains what limited data we collect and why.</p>
+  <h3>Usage data</h3><p>To understand which tools are useful, we record anonymous, session-based usage events (tool name and timestamp) tied to a randomly generated identifier stored in your browser — never your name or content.</p>
+  <h3>Cookies</h3><p>We use functional cookies/local storage to remember basic preferences. See our Cookie Policy for detail.</p>
+  <h3>Third parties</h3><p>We may use privacy-respecting analytics to understand aggregate traffic. We do not sell personal data.</p>
+  <h3>Contact</h3><p>Questions about this policy can be sent via our Contact page.</p>`));
+route('/terms', ()=> document.getElementById('app').innerHTML = legalPage('Terms &amp; Conditions', `
+  <p>By using Lensfield, you agree to use the tools and content for lawful purposes only.</p>
+  <h3>No warranty</h3><p>Tools are provided "as is" without guarantee of accuracy. Always verify important SEO or technical decisions independently.</p>
+  <h3>Acceptable use</h3><p>Do not use automated scraping against this site beyond normal browsing, or attempt to disrupt the service.</p>
+  <h3>Changes</h3><p>We may update these terms; continued use after changes means you accept the update.</p>`));
+route('/disclaimer', ()=> document.getElementById('app').innerHTML = legalPage('Disclaimer', `
+  <p>Content and tools on Lensfield are for general informational purposes only and do not constitute professional SEO, legal, or marketing advice.</p>
+  <p>Search engine behavior changes frequently; results from our tools reflect general best practice at the time of writing and are not guaranteed to affect rankings.</p>`));
+route('/cookies', ()=> document.getElementById('app').innerHTML = legalPage('Cookie Policy', `
+  <p>Lensfield uses your browser's local storage — not third-party tracking cookies — to remember basic settings and anonymous tool-usage counts on your own device.</p>
+  <p>You can clear this at any time by clearing your browser's site data for this domain. Doing so will not affect your ability to use any tool.</p>`));
+route('/sitemap', ()=>{
+  const links=['/','/tools',...TOOL_LIST.map(t=>'/tools/'+t.slug),'/blog',...getPosts().map(p=>'/blog/'+p.slug),'/categories','/guides','/faq','/about','/contact','/privacy','/terms','/disclaimer','/cookies'];
+  document.getElementById('app').innerHTML = legalPage('Sitemap', `<ul>${links.map(l=>`<li><a href="#${l}">${l}</a></li>`).join('')}</ul>`);
+});
+route('/404', ()=>{
+  document.getElementById('app').innerHTML = `<div class="hero"><h1>Page not found</h1><p class="lead">That page doesn't exist. Try the tools index or head back home.</p>
+  <div style="margin-top:16px"><a class="btn" href="#/">Go home</a> <a class="btn ghost" href="#/tools">Browse tools</a></div></div>`;
+});
+
+/* ---------- ADMIN ---------- */
+function isAdmin(){ return LS.get('lf_admin', false); }
+route('/admin', ()=>{
+  if(!isAdmin()){
+    document.getElementById('app').innerHTML = `
+      <div class="hero"><h1>Admin login</h1><p class="lead">Demo credentials: <b>admin@lensfield.example</b> / <b>lensfield123</b></p></div>
+      <form id="al" style="max-width:360px">
+        <label>Email</label><input type="text" id="al-u" value="admin@lensfield.example">
+        <label>Password</label><input type="password" id="al-p">
+        <button class="btn" style="margin-top:16px" type="submit">Log in</button>
+        <div id="al-msg"></div>
+      </form>`;
+    document.getElementById('al').addEventListener('submit', e=>{
+      e.preventDefault();
+      if(document.getElementById('al-p').value==='lensfield123'){ LS.set('lf_admin', true); location.hash='#/admin/dashboard'; navigate(); }
+      else document.getElementById('al-msg').innerHTML='<div class="msg err">Incorrect password.</div>';
+    });
+    return;
+  }
+  location.hash='#/admin/dashboard';
+});
+function adminBar(active){
+  const tabs=[['dashboard','Dashboard'],['blog','Blog'],['stats','Tool stats'],['settings','Settings']];
+  return `<div class="admin-bar">${tabs.map(([k,l])=>`<a class="btn ${active===k?'':'ghost'}" href="#/admin/${k}">${l}</a>`).join('')}
+    <a class="btn ghost" href="#" id="admin-logout">Log out</a></div>`;
+}
+function bindLogout(){ const el=document.getElementById('admin-logout'); if(el) el.onclick=(e)=>{e.preventDefault(); LS.set('lf_admin',false); location.hash='#/admin'; navigate();}; }
+route('/admin/dashboard', ()=>{
+  if(!isAdmin()){ location.hash='#/admin'; navigate(); return; }
+  const usage=getUsage();
+  const today=usage.filter(u=> new Date(u.t).toDateString()===new Date().toDateString());
+  const counts={}; usage.forEach(u=>counts[u.tool]=(counts[u.tool]||0)+1);
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('app').innerHTML = `
+    <div class="hero"><h1>Admin dashboard</h1></div>
+    ${adminBar('dashboard')}
+    <div class="stats">
+      <div class="stat"><b>${usage.length}</b><span>Total tool runs</span></div>
+      <div class="stat"><b>${today.length}</b><span>Runs today</span></div>
+      <div class="stat"><b>${getPosts().length}</b><span>Blog posts</span></div>
+      <div class="stat"><b>${top[0]?top[0][0]:'—'}</b><span>Most-used tool</span></div>
+    </div>
+    <h2>Most used tools</h2>
+    <table><tr><th>Tool</th><th>Runs</th></tr>${top.map(([k,c])=>`<tr><td>${k}</td><td>${c}</td></tr>`).join('') || '<tr><td colspan=2">No usage yet</td></tr>'}</table>
+    <h2>Recent activity</h2>
+    <table><tr><th>Tool</th><th>When</th></tr>${usage.slice(-8).reverse().map(u=>`<tr><td>${u.tool}</td><td>${new Date(u.t).toLocaleString()}</td></tr>`).join('') || '<tr><td colspan="2">No activity yet</td></tr>'}</table>
+  `;
+  bindLogout();
+});
+route('/admin/stats', ()=>{
+  if(!isAdmin()){ location.hash='#/admin'; navigate(); return; }
+  const usage=getUsage();
+  const counts={}; usage.forEach(u=>counts[u.tool]=(counts[u.tool]||0)+1);
+  document.getElementById('app').innerHTML = `<div class="hero"><h1>Tool statistics</h1></div>${adminBar('stats')}
+    <table><tr><th>Tool</th><th>Total runs</th></tr>${Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,c])=>`<tr><td>${k}</td><td>${c}</td></tr>`).join('') || '<tr><td colspan="2">No usage recorded yet — try a tool.</td></tr>'}</table>`;
+  bindLogout();
+});
+route('/admin/blog', ()=>{
+  if(!isAdmin()){ location.hash='#/admin'; navigate(); return; }
+  const posts=getPosts();
+  document.getElementById('app').innerHTML = `<div class="hero"><h1>Blog management</h1></div>${adminBar('blog')}
+    <h2>New post</h2>
+    <form id="bp">
+      <label>Title</label><input type="text" id="bp-title" required>
+      <label>Category</label><input type="text" id="bp-cat" value="General">
+      <label>Excerpt</label><input type="text" id="bp-ex" required>
+      <label>Body</label><textarea id="bp-body" style="font-family:var(--sans);min-height:120px" required></textarea>
+      <button class="btn" style="margin-top:14px" type="submit">Publish post</button>
+    </form>
+    <h2>Existing posts</h2>
+    <table><tr><th>Title</th><th>Category</th><th>Date</th><th></th></tr>
+    ${posts.map(p=>`<tr><td>${p.title}</td><td>${p.category}</td><td>${p.date}</td><td><a href="#" data-del="${p.id}" class="del-post">Delete</a></td></tr>`).join('')}
+    </table>`;
+  bindLogout();
+  document.getElementById('bp').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const title=document.getElementById('bp-title').value;
+    const slug=title.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+    await addPost({id:'p'+Date.now(), title, slug, category:document.getElementById('bp-cat').value||'General',
+      date:new Date().toISOString().slice(0,10), excerpt:document.getElementById('bp-ex').value, body:document.getElementById('bp-body').value});
+    location.hash='#/admin/blog'; navigate();
+  });
+  document.querySelectorAll('.del-post').forEach(a=>a.onclick=async (e)=>{
+    e.preventDefault(); await deletePost(a.dataset.del); location.hash='#/admin/blog'; navigate();
+  });
+});
+route('/admin/settings', ()=>{
+  if(!isAdmin()){ location.hash='#/admin'; navigate(); return; }
+  const s=getSettings();
+  document.getElementById('app').innerHTML = `<div class="hero"><h1>Website settings</h1></div>${adminBar('settings')}
+    <form id="sf" style="max-width:480px">
+      <label>Site name</label><input type="text" id="s-name" value="${s.siteName}">
+      <label>Contact email</label><input type="email" id="s-email" value="${s.contactEmail}">
+      <label>Analytics ID (optional)</label><input type="text" id="s-ga" value="${s.gaId}">
+      <button class="btn" style="margin-top:16px" type="submit">Save settings</button>
+      <div id="sf-msg"></div>
+    </form>`;
+  bindLogout();
+  document.getElementById('sf').addEventListener('submit', async e=>{
+    e.preventDefault();
+    await saveSettings({siteName:document.getElementById('s-name').value, contactEmail:document.getElementById('s-email').value, gaId:document.getElementById('s-ga').value});
+    document.getElementById('fSiteName').textContent=getSettings().siteName;
+    document.getElementById('sf-msg').innerHTML='<div class="msg ok">Settings saved'+(sb?' — visible to everyone now.':' to this browser only (connect Supabase to share).')+'</div>';
+  });
+});
+
+/* ---------- init ---------- */
+document.getElementById('yr').textContent=new Date().getFullYear();
+(async ()=>{
+  await Promise.all([refreshPosts(), refreshUsage(), refreshSettings()]);
+  if(sb){ const {data} = await sb.auth.getUser(); currentUser = data?.user || null; }
+  renderAuthArea();
+  document.getElementById('fSiteName').textContent=getSettings().siteName;
+  if(!location.hash) location.hash='#/';
+  navigate();
+})();
+</script>
+</body>
+</html>
